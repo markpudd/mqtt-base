@@ -1,4 +1,4 @@
-# mqtt-base
+# mqttbase
 MQTT Base
 
 This is the base of some MQTT tools.   The intended use of these are for a MQTT gateway project.

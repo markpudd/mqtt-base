@@ -42,27 +42,27 @@ func TestRecievePublishPacket(t *testing.T) {
 	} else {
 		var packet *PublishPacket
 		packet = packetIf.(*PublishPacket)
-		if packet.fixedHeader == nil {
+		if packet.FixedHeader == nil {
 			t.Errorf("Fixed header nil")
 		} else {
-			if packet.fixedHeader.cntrlPacketType != Publish {
+			if packet.FixedHeader.cntrlPacketType != Publish {
 				t.Errorf("Packet not Publish")
 			}
 		}
-		if packet.id != 0x3acd {
-			t.Errorf("Packet id is %#x but should 0x3acd", packet.id)
+		if packet.Id != 0x3acd {
+			t.Errorf("Packet id is %#x but should 0x3acd", packet.Id)
 		}
-		if packet.topicName != "a/b" {
-			t.Errorf("Packet topic name is %s but should be a/b", packet.topicName)
+		if packet.TopicName != "a/b" {
+			t.Errorf("Packet topic name is %s but should be a/b", packet.TopicName)
 		}
-		if len(packet.data) != 9 {
-			t.Errorf("Packet data length should be 9 but is %d", len(packet.data))
+		if len(packet.Data) != 9 {
+			t.Errorf("Packet data length should be 9 but is %d", len(packet.Data))
 		} else {
 			expected := []byte("TEST_DATA")
 			for i := 0; i < 9; i++ {
-				if packet.data[i] != expected[i] {
+				if packet.Data[i] != expected[i] {
 					t.Errorf("Expected %#x at %d but got %#x",
-						expected[i], i, packet.data[i])
+						expected[i], i, packet.Data[i])
 				}
 			}
 		}
@@ -82,7 +82,7 @@ func TestUnmarshalConnectPacket(t *testing.T) {
 	buffer := []byte{21, 14, 0, 4, 'M', 'Q', 'T', 'T', 4, 0, 1, 2, 0, 4, 't', 'e', 's', 't'}
 	packet, _ := Unmarshal(buffer)
 	if (*packet).PacketType() != Connect {
-		t.Errorf("Packet not publish")
+		t.Errorf("Packet not connect")
 	}
 }
 
@@ -90,7 +90,7 @@ func TestUnmarshalConnackPacket(t *testing.T) {
 	buffer := []byte{32, 2, 0, 3}
 	packet, _ := Unmarshal(buffer)
 	if (*packet).PacketType() != Connack {
-		t.Errorf("Packet not publish")
+		t.Errorf("Packet not connectack")
 	}
 }
 
@@ -99,5 +99,21 @@ func TestUnmarshalPubackPacket(t *testing.T) {
 	packet, _ := Unmarshal(buffer)
 	if (*packet).PacketType() != Puback {
 		t.Errorf("Packet not publish")
+	}
+}
+
+func TestUnmarshalPingreqPacket(t *testing.T) {
+	buffer := []byte{0xc0, 0}
+	packet, _ := Unmarshal(buffer)
+	if (*packet).PacketType() != Pingreq {
+		t.Errorf("Packet not Pingreq")
+	}
+}
+
+func TestUnmarshalPingrespPacket(t *testing.T) {
+	buffer := []byte{0xd0, 0}
+	packet, _ := Unmarshal(buffer)
+	if (*packet).PacketType() != Pingresp {
+		t.Errorf("Packet not Pingresp")
 	}
 }

@@ -45,10 +45,14 @@ func UnencodeLength(b []byte) (uint32, bool) {
 	var ret uint32
 	var shift uint32
 	i := 0
-	for i <= len(b) && b[i]&0x80 > 0 {
+	for i < len(b) && b[i]&0x80 > 0 {
 		ret = ret + (uint32(b[i]&0x7f) << shift)
 		shift = shift + 7
 		i++
 	}
-	return ret + (uint32(b[i]&0x7f) << shift), i <= len(b)
+	if i < len(b) {
+		return ret + (uint32(b[i]&0x7f) << shift), true
+	} else {
+		return 0, false
+	}
 }

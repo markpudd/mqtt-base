@@ -9,7 +9,7 @@ func TestConnackPacketConstructor(t *testing.T) {
 	if packet == nil {
 		t.Errorf("Packet is nil")
 	} else {
-		if packet.fixedHeader == nil {
+		if packet.FixedHeader == nil {
 			t.Errorf("Fixed header is nil")
 		}
 	}
@@ -17,8 +17,8 @@ func TestConnackPacketConstructor(t *testing.T) {
 
 func TestMarshalConnack(t *testing.T) {
 	packet := NewConnackPacket()
-	packet.sessionPresent = false
-	packet.returnCode = ConAccept
+	packet.SessionPresent = false
+	packet.ReturnCode = ConAccept
 	data, _ := packet.Marshal()
 	if len(data) != 4 {
 		t.Errorf("Data lentgh wrong should be 4 but was %d", len(data))
@@ -35,8 +35,8 @@ func TestMarshalConnack(t *testing.T) {
 
 func TestMarshalConnackSession(t *testing.T) {
 	packet := NewConnackPacket()
-	packet.sessionPresent = true
-	packet.returnCode = ConAccept
+	packet.SessionPresent = true
+	packet.ReturnCode = ConAccept
 	data, _ := packet.Marshal()
 	if len(data) != 4 {
 		t.Errorf("Data lentgh wrong should be 4 but was %d", len(data))
@@ -55,10 +55,10 @@ func TestUnmarshalConnack(t *testing.T) {
 	data := []byte{32, 2, 1, 0}
 	packet := new(ConnackPacket)
 	packet.unmarshal(data)
-	if packet.fixedHeader == nil {
+	if packet.FixedHeader == nil {
 		t.Errorf("Fixed header nil")
 	}
-	if !packet.sessionPresent {
+	if !packet.SessionPresent {
 		t.Errorf("Session not checked")
 	}
 }
@@ -67,13 +67,13 @@ func TestUnmarshalConnackReturnType(t *testing.T) {
 	data := []byte{32, 2, 0, 3}
 	packet := new(ConnackPacket)
 	packet.unmarshal(data)
-	if packet.fixedHeader == nil {
+	if packet.FixedHeader == nil {
 		t.Errorf("Fixed header nil")
 	}
-	if packet.sessionPresent {
+	if packet.SessionPresent {
 		t.Errorf("Session  checked")
 	}
-	if packet.returnCode != ConRefuseServerUnavailable {
+	if packet.ReturnCode != ConRefuseServerUnavailable {
 		t.Errorf("Return code incorrect")
 	}
 }

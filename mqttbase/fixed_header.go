@@ -39,13 +39,13 @@ const Suback byte = 0x90
 const Unsubscribe byte = 0xa2
 
 // Pingreq - Constant Pingreq bit
-const Pingreq byte = 0xb0
+const Pingreq byte = 0xc0
 
 // Pingresp - Constant Pingresp bit
-const Pingresp byte = 0xc0
+const Pingresp byte = 0xd0
 
 // Disconnect - Constant Disconnect bit
-const Disconnect byte = 0xd0
+const Disconnect byte = 0xe0
 
 // Dup - Constant Dup bit
 const Dup byte = 0x08
@@ -70,6 +70,9 @@ func (fh *FixedHeader) Marshal() []byte {
 func (fh *FixedHeader) unmarshal(b []byte) {
 	if b[0] == 0x82 {
 		fh.cntrlPacketType = 0x82
+		fh.flags = 0
+	} else if b[0] == 0xa2 {
+		fh.cntrlPacketType = 0xa2
 		fh.flags = 0
 	} else {
 		fh.cntrlPacketType = b[0] & 0xF0

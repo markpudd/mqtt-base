@@ -24,9 +24,9 @@ const ConRefuseNoAuth byte = 0x05
 
 // ConnackPacket - ConnackPacket stucture
 type ConnackPacket struct {
-	fixedHeader    *FixedHeader
-	sessionPresent bool
-	returnCode     byte
+	FixedHeader    *FixedHeader
+	SessionPresent bool
+	ReturnCode     byte
 }
 
 // PacketType - Returns packet type
@@ -37,22 +37,22 @@ func (p *ConnackPacket) PacketType() byte {
 // NewConnackPacket - Creates a new Connack Packet
 func NewConnackPacket() *ConnackPacket {
 	packet := new(ConnackPacket)
-	packet.fixedHeader = new(FixedHeader)
-	packet.fixedHeader.cntrlPacketType = Connack
-	packet.fixedHeader.remaingLength = 2
+	packet.FixedHeader = new(FixedHeader)
+	packet.FixedHeader.cntrlPacketType = Connack
+	packet.FixedHeader.remaingLength = 2
 	return packet
 }
 
 func (p *ConnackPacket) Marshal() ([]byte, error) {
-	fixedHeader := p.fixedHeader.Marshal()
+	fixedHeader := p.FixedHeader.Marshal()
 	data := make([]byte, 0, 4)
 	data = append(data, fixedHeader...)
-	if p.sessionPresent {
+	if p.SessionPresent {
 		data = append(data, 1)
 	} else {
 		data = append(data, 0)
 	}
-	data = append(data, p.returnCode)
+	data = append(data, p.ReturnCode)
 	return data, nil
 }
 
@@ -62,12 +62,12 @@ func (p *ConnackPacket) unmarshal(data []byte) error {
 	}
 	fh := new(FixedHeader)
 	fh.unmarshal(data)
-	p.fixedHeader = fh
+	p.FixedHeader = fh
 	if data[2] == 1 {
-		p.sessionPresent = true
+		p.SessionPresent = true
 	} else {
-		p.sessionPresent = false
+		p.SessionPresent = false
 	}
-	p.returnCode = data[3]
+	p.ReturnCode = data[3]
 	return nil
 }

@@ -1,6 +1,9 @@
 package mqttbase
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // MaxPacketSize - maximum packet size
 const MaxPacketSize int = 65000
@@ -38,10 +41,14 @@ func (dr *DataReader) RecieveByte(b byte) {
 	}
 	dr.pos++
 	if dr.pos == dr.length {
-		packet, _ := Unmarshal(dr.data)
+		packet, err := Unmarshal(dr.data)
+		if err != nil {
+			fmt.Printf("Error %s", err)
+		}
 		_ = dr.processor.Process(packet)
 		dr.data = dr.data[:0]
 		dr.length = MaxPacketSize
+		dr.pos = 0
 	}
 }
 
@@ -49,6 +56,7 @@ func (dr *DataReader) RecieveByte(b byte) {
 // buffer and entire buffer
 func Unmarshal(data []byte) (*Packet, error) {
 	var packet Packet
+
 	// check first four bits of data to get packet type
 	if len(data) == 0 {
 		return nil, errors.New("Zero length data packet")
@@ -70,7 +78,24 @@ func Unmarshal(data []byte) (*Packet, error) {
 		packet = NewPubackPacket()
 		packet.unmarshal(data)
 		break
+	case 0x80:
+		packet = NewSubscribePacket()
+		packet.unmarshal(data)
+		break
+	case 0x90:
+		packet = NewSubackPacket()
+		packet.unmarshal(data)
+		break
+	case 0xc0:
+		packet = NewPingReqPacket()
+		packet.unmarshal(data)
+		break
+	case 0xd0:
+		packet = NewPingRespPacket()
+		packet.unmarshal(data)
+		break
 	default:
+		fmt.Printf("Unsuported %#x", data[0])
 		return nil, errors.New("Unsupported packet type")
 	}
 	return &packet, nil

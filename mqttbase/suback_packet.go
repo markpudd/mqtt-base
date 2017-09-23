@@ -16,42 +16,42 @@ const Failure byte = 0xF0
 
 // SubackPacket - Subcription ack packet structure
 type SubackPacket struct {
-	fixedHeader *FixedHeader
-	id          uint16
-	returnCodes []byte
+	FixedHeader *FixedHeader
+	Id          uint16
+	ReturnCodes []byte
 }
 
 // PacketType - Returns packet type
 func (p *SubackPacket) PacketType() byte {
-	return Subscribe
+	return Suback
 }
 
 // NewSubackPacket - Creates a new Suback Packet
 func NewSubackPacket() *SubackPacket {
 	packet := new(SubackPacket)
-	packet.fixedHeader = new(FixedHeader)
-	packet.fixedHeader.cntrlPacketType = Suback
-	packet.fixedHeader.remaingLength = 2
+	packet.FixedHeader = new(FixedHeader)
+	packet.FixedHeader.cntrlPacketType = Suback
+	packet.FixedHeader.remaingLength = 2
 	// TODO - Fix this.......
-	packet.returnCodes = make([]byte, 0, 32)
+	packet.ReturnCodes = make([]byte, 0, 32)
 	return packet
 }
 
-func (p *SubackPacket) addReturnCode(code byte) {
-	p.returnCodes = append(p.returnCodes, code)
+func (p *SubackPacket) AddReturnCode(code byte) {
+	p.ReturnCodes = append(p.ReturnCodes, code)
 }
 
 func (p *SubackPacket) Marshal() ([]byte, error) {
-	p.fixedHeader.remaingLength = uint32(len(p.returnCodes) + 2)
-	fixedHeader := p.fixedHeader.Marshal()
+	p.FixedHeader.remaingLength = uint32(len(p.ReturnCodes) + 2)
+	fixedHeader := p.FixedHeader.Marshal()
 	// 2 is variable header
-	data := make([]byte, 0, len(p.returnCodes)+2)
+	data := make([]byte, 0, len(p.ReturnCodes)+2)
 	data = append(data, fixedHeader...)
 	// append ID
-	data = append(data, byte(p.id>>8))
-	data = append(data, byte(p.id))
+	data = append(data, byte(p.Id>>8))
+	data = append(data, byte(p.Id))
 
-	for _, code := range p.returnCodes {
+	for _, code := range p.ReturnCodes {
 		data = append(data, code)
 	}
 	return data, nil
@@ -60,16 +60,16 @@ func (p *SubackPacket) Marshal() ([]byte, error) {
 func (p *SubackPacket) unmarshal(data []byte) error {
 	fh := new(FixedHeader)
 	fh.unmarshal(data)
-	p.fixedHeader = fh
+	p.FixedHeader = fh
 	if fh.remaingLength < 2 {
 		return errors.New("No subscribe ack packet id")
 	}
-	p.id = uint16(data[2])<<8 | uint16(data[3])
+	p.Id = uint16(data[2])<<8 | uint16(data[3])
 	// TODO - Fix this.......
-	p.returnCodes = make([]byte, 0, 32)
+	p.ReturnCodes = make([]byte, 0, 32)
 	pos := 4
 	for uint32(pos) < fh.remaingLength+2 {
-		p.addReturnCode(data[pos])
+		p.AddReturnCode(data[pos])
 		pos++
 	}
 	return nil

@@ -2,40 +2,34 @@ package mqttbase
 
 import "errors"
 
-// TopicFilter - TopicFilter  structure
-type TopicFilter struct {
-	Filter string
-	Qos    byte
-}
-
-// SubscribePacket - Subscribe packet structure
-type SubscribePacket struct {
+// UnsubscribePacket - Unubscribe packet structure
+type UnsubscribePacket struct {
 	FixedHeader *FixedHeader
 	Id          uint16
 	Topics      []*TopicFilter
 }
 
+func (p *UnsubscribePacket) AddTopic(topic *TopicFilter) {
+	p.Topics = append(p.Topics, topic)
+}
+
 // PacketType - Returns packet type
-func (p *SubscribePacket) PacketType() byte {
-	return Subscribe
+func (p *UnsubscribePacket) PacketType() byte {
+	return Unsubscribe
 }
 
 // NewSubscribePacket - Creates a new Subscribe Packet
-func NewSubscribePacket() *SubscribePacket {
-	packet := new(SubscribePacket)
+func NewUnsubscribePacket() *UnsubscribePacket {
+	packet := new(UnsubscribePacket)
 	packet.FixedHeader = new(FixedHeader)
-	packet.FixedHeader.cntrlPacketType = Subscribe
+	packet.FixedHeader.cntrlPacketType = Unsubscribe
 	packet.FixedHeader.remaingLength = 2
 	// TODO - Fix this.......
 	packet.Topics = make([]*TopicFilter, 0, 32)
 	return packet
 }
 
-func (p *SubscribePacket) AddTopic(topic *TopicFilter) {
-	p.Topics = append(p.Topics, topic)
-}
-
-func (p *SubscribePacket) Marshal() ([]byte, error) {
+func (p *UnsubscribePacket) Marshal() ([]byte, error) {
 	totalLen := 0
 	for _, topic := range p.Topics {
 		// lentgh of string plus 2 (len) + qos
@@ -58,13 +52,13 @@ func (p *SubscribePacket) Marshal() ([]byte, error) {
 	return data, nil
 }
 
-func (p *SubscribePacket) unmarshal(data []byte) error {
+func (p *UnsubscribePacket) unmarshal(data []byte) error {
 	var err error
 	fh := new(FixedHeader)
 	fh.unmarshal(data)
 	p.FixedHeader = fh
 	if fh.remaingLength < 2 {
-		return errors.New("No subscribe packet id")
+		return errors.New("No unsubscribe packet id")
 	}
 	p.Id = uint16(data[2])<<8 | uint16(data[3])
 	// TODO - Fix this.......

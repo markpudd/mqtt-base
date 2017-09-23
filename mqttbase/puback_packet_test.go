@@ -9,7 +9,7 @@ func TestPubackPacketConstructor(t *testing.T) {
 	if packet == nil {
 		t.Errorf("Packet is nil")
 	} else {
-		if packet.fixedHeader == nil {
+		if packet.FixedHeader == nil {
 			t.Errorf("Fixed header is nil")
 		}
 	}
@@ -17,7 +17,7 @@ func TestPubackPacketConstructor(t *testing.T) {
 
 func TestMarshalPuback(t *testing.T) {
 	packet := NewPubackPacket()
-	packet.id = 0x3acd
+	packet.Id = 0x3acd
 	data, _ := packet.Marshal()
 	if len(data) != 4 {
 		t.Errorf("Data length wrong should be 4 but was %d", len(data))
@@ -36,10 +36,10 @@ func TestUnmarshalPubackReturnType(t *testing.T) {
 	data := []byte{0x40, 2, 0x3a, 0xcd}
 	packet := new(PubackPacket)
 	packet.unmarshal(data)
-	if packet.fixedHeader == nil {
+	if packet.FixedHeader == nil {
 		t.Errorf("Fixed header nil")
 	}
-	if packet.id != 0x3acd {
-		t.Errorf("Packet id is %#x but should 0x3acd", packet.id)
+	if packet.Id != 0x3acd {
+		t.Errorf("Packet id is %#x but should 0x3acd", packet.Id)
 	}
 }

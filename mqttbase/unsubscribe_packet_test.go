@@ -4,8 +4,8 @@ import (
 	"testing"
 )
 
-func TestSubscribePacketConstructor(t *testing.T) {
-	packet := NewSubscribePacket()
+func TestUnsubscribePacketConstructor(t *testing.T) {
+	packet := NewUnsubscribePacket()
 	if packet == nil {
 		t.Errorf("Packet is nil")
 	} else {
@@ -15,7 +15,7 @@ func TestSubscribePacketConstructor(t *testing.T) {
 	}
 }
 
-func TestAddTopic(t *testing.T) {
+func TestAddTopicUnsub(t *testing.T) {
 	packet := NewSubscribePacket()
 	topic1 := new(TopicFilter)
 	topic1.Filter = "a/b"
@@ -26,8 +26,8 @@ func TestAddTopic(t *testing.T) {
 	}
 }
 
-func TestMarshalSubscribe(t *testing.T) {
-	packet := NewSubscribePacket()
+func TestMarshalUnsubscribe(t *testing.T) {
+	packet := NewUnsubscribePacket()
 	topic1 := new(TopicFilter)
 	topic1.Filter = "a/b"
 	topic1.Qos = Retain
@@ -43,8 +43,8 @@ func TestMarshalSubscribe(t *testing.T) {
 	if len(data) != 16 {
 		t.Errorf("Data lentgh wrong should be 16 but was %d", len(data))
 	} else {
-		if data[0] != 0x82 {
-			t.Errorf("Packet should start with id 0x82 but starts with %#x",
+		if data[0] != 0xa2 {
+			t.Errorf("Packet should start with id 0xa2 but starts with %#x",
 				data[0])
 		}
 		if data[1] != 14 {
@@ -83,7 +83,7 @@ func TestMarshalSubscribe(t *testing.T) {
 	}
 }
 
-func TestMarshalSubscribeOneTopic(t *testing.T) {
+func TestMarshalUnsubscribeOneTopic(t *testing.T) {
 	packet := NewSubscribePacket()
 	topic1 := new(TopicFilter)
 	topic1.Filter = "a/b"
@@ -123,15 +123,15 @@ func TestMarshalSubscribeOneTopic(t *testing.T) {
 	}
 }
 
-func TestUnmarshalSubscribe(t *testing.T) {
-	data := []byte{0x82, 13, 0x5a, 0x22, 0, 3, 'e', '/', 'f', 1, 0, 2, 'g', 'h', 2}
-	packet := new(SubscribePacket)
+func TestUnmarshalUnsubscribe(t *testing.T) {
+	data := []byte{0xa2, 13, 0x5a, 0x22, 0, 3, 'e', '/', 'f', 1, 0, 2, 'g', 'h', 2}
+	packet := new(UnsubscribePacket)
 	packet.unmarshal(data)
 	if packet.FixedHeader == nil {
 		t.Errorf("Fixed header nil")
 	} else {
-		if packet.FixedHeader.cntrlPacketType != Subscribe {
-			t.Errorf("Packet not Subscibe")
+		if packet.FixedHeader.cntrlPacketType != Unsubscribe {
+			t.Errorf("Packet not Unubscibe %d", packet.FixedHeader.cntrlPacketType)
 		}
 	}
 	if packet.Id != 0x5a22 {

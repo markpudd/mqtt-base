@@ -10,29 +10,29 @@ func TestConstructorConnectPacket(t *testing.T) {
 	if packet.PacketType() != Connect {
 		t.Errorf("Packet types should be Connect")
 	}
-	if packet.userNameFlag {
+	if packet.UserNameFlag {
 		t.Errorf("Username flag should be false")
 	}
-	if packet.passwordFlag {
+	if packet.PasswordFlag {
 		t.Errorf("Password flag should be false")
 	}
-	if packet.willRetain {
+	if packet.WillRetain {
 		t.Errorf("will Retain flag should be false")
 	}
-	if packet.willFlag {
+	if packet.WillFlag {
 		t.Errorf("will flag should be false")
 	}
-	if packet.cleanSession {
+	if packet.CleanSession {
 		t.Errorf("cleanSession flag should be false")
 	}
-	if packet.qos > 0 {
+	if packet.Qos > 0 {
 		t.Errorf("qos flag should be 0")
 	}
 }
 
 func TestMarshalConnectHeader(t *testing.T) {
 	packet := NewConnectPacket()
-	packet.keepAlive = 258
+	packet.KeepAlive = 258
 
 	data := packet.MarshalVariableHeader()
 
@@ -66,7 +66,7 @@ func TestMarshalConnectHeader(t *testing.T) {
 
 func TestMarshalUsernameFlag(t *testing.T) {
 	packet := NewConnectPacket()
-	packet.userNameFlag = true
+	packet.UserNameFlag = true
 	data := packet.MarshalVariableHeader()
 	if data[7] != UsernameFlag {
 		t.Errorf("UsernameFlag not set or other flags set %d", data[7])
@@ -75,7 +75,7 @@ func TestMarshalUsernameFlag(t *testing.T) {
 
 func TestMarshalPasswordFlag(t *testing.T) {
 	packet := NewConnectPacket()
-	packet.passwordFlag = true
+	packet.PasswordFlag = true
 	data := packet.MarshalVariableHeader()
 	if data[7] != PasswordFlag {
 		t.Errorf("PasswordFlag not set or other flags set %d", data[7])
@@ -84,7 +84,7 @@ func TestMarshalPasswordFlag(t *testing.T) {
 
 func TestMarshalWillRetainFlag(t *testing.T) {
 	packet := NewConnectPacket()
-	packet.willRetain = true
+	packet.WillRetain = true
 	data := packet.MarshalVariableHeader()
 	if data[7] != WillRetainFlag {
 		t.Errorf("WillRetainFlag not set or other flags set %d", data[7])
@@ -93,7 +93,7 @@ func TestMarshalWillRetainFlag(t *testing.T) {
 
 func TestMarshalWillFlag(t *testing.T) {
 	packet := NewConnectPacket()
-	packet.willFlag = true
+	packet.WillFlag = true
 	data := packet.MarshalVariableHeader()
 	if data[7] != WillFlag {
 		t.Errorf("WillFlag not set or other flags set %d", data[7])
@@ -102,7 +102,7 @@ func TestMarshalWillFlag(t *testing.T) {
 
 func TestMarshalCleanSession(t *testing.T) {
 	packet := NewConnectPacket()
-	packet.cleanSession = true
+	packet.CleanSession = true
 	data := packet.MarshalVariableHeader()
 	if data[7] != CleanSession {
 		t.Errorf("CleanSession not set or other flags set %d", data[7])
@@ -111,17 +111,17 @@ func TestMarshalCleanSession(t *testing.T) {
 
 func TestQOSVale(t *testing.T) {
 	packet := NewConnectPacket()
-	packet.qos = 1
+	packet.Qos = 1
 	data := packet.MarshalVariableHeader()
 	if data[7] != WillQos1Flag {
 		t.Errorf("WillQos1Flag not set or other flags set %d", data[7])
 	}
-	packet.qos = 2
+	packet.Qos = 2
 	data = packet.MarshalVariableHeader()
 	if data[7] != WillQos2Flag {
 		t.Errorf("WillQos2Flag not set or other flags set %d", data[7])
 	}
-	packet.qos = 3
+	packet.Qos = 3
 	data = packet.MarshalVariableHeader()
 	if data[7] != (WillQos1Flag | WillQos2Flag) {
 		t.Errorf("WillQos1Flag and WillQos2Flag not set or other flags set %d", data[7])
@@ -141,8 +141,8 @@ func TestUnmarshalConnectHeader(t *testing.T) {
 		t.Errorf("Packet type %d when should be %d", packet.PacketType(), Connect)
 	}
 
-	if packet.keepAlive != 258 {
-		t.Errorf("keepAlive %d when should be 258", packet.keepAlive)
+	if packet.KeepAlive != 258 {
+		t.Errorf("keepAlive %d when should be 258", packet.KeepAlive)
 	}
 }
 
@@ -159,7 +159,7 @@ func TestUnmarshalUsernameFlag(t *testing.T) {
 	data := []byte{0, 4, 'M', 'Q', 'T', 'T', 4, UsernameFlag, 1, 2}
 	packet := NewConnectPacket()
 	packet.unmarshalVariableHeader(data)
-	if packet.userNameFlag != true {
+	if packet.UserNameFlag != true {
 		t.Errorf("userNameFlag not set on unmarshal %d", data[7])
 	}
 }
@@ -168,7 +168,7 @@ func TestUnmarshalPasswordFlag(t *testing.T) {
 	data := []byte{0, 4, 'M', 'Q', 'T', 'T', 4, PasswordFlag, 1, 2}
 	packet := NewConnectPacket()
 	packet.unmarshalVariableHeader(data)
-	if packet.passwordFlag != true {
+	if packet.PasswordFlag != true {
 		t.Errorf("passwordFlag not set on unmarshal")
 	}
 }
@@ -177,7 +177,7 @@ func TestUnmarshalWillRetainFlag(t *testing.T) {
 	data := []byte{0, 4, 'M', 'Q', 'T', 'T', 4, WillRetainFlag, 1, 2}
 	packet := NewConnectPacket()
 	packet.unmarshalVariableHeader(data)
-	if packet.willRetain != true {
+	if packet.WillRetain != true {
 		t.Errorf("willRetain not set on unmarshal")
 	}
 }
@@ -186,7 +186,7 @@ func TestUnmarshalWillFlag(t *testing.T) {
 	data := []byte{0, 4, 'M', 'Q', 'T', 'T', 4, WillFlag, 1, 2}
 	packet := NewConnectPacket()
 	packet.unmarshalVariableHeader(data)
-	if packet.willFlag != true {
+	if packet.WillFlag != true {
 		t.Errorf("willFlag not set on unmarshal")
 	}
 }
@@ -195,7 +195,7 @@ func TestUnmarshalCleanSession(t *testing.T) {
 	data := []byte{0, 4, 'M', 'Q', 'T', 'T', 4, CleanSession, 1, 2}
 	packet := NewConnectPacket()
 	packet.unmarshalVariableHeader(data)
-	if packet.cleanSession != true {
+	if packet.CleanSession != true {
 		t.Errorf("cleanSession not set on unmarshal")
 	}
 }
@@ -204,22 +204,22 @@ func TestUnmarshalQOSVale(t *testing.T) {
 	data := []byte{0, 4, 'M', 'Q', 'T', 'T', 4, WillQos1Flag, 1, 2}
 	packet := NewConnectPacket()
 	packet.unmarshalVariableHeader(data)
-	if packet.qos != 1 {
-		t.Errorf("qos is %d but should be 1 on unmarshal", packet.qos)
+	if packet.Qos != 1 {
+		t.Errorf("qos is %d but should be 1 on unmarshal", packet.Qos)
 	}
 
 	data = []byte{0, 4, 'M', 'Q', 'T', 'T', 4, WillQos2Flag, 1, 2}
 	packet = NewConnectPacket()
 	packet.unmarshalVariableHeader(data)
-	if packet.qos != 2 {
-		t.Errorf("qos is %d but should be 2 on unmarshal", packet.qos)
+	if packet.Qos != 2 {
+		t.Errorf("qos is %d but should be 2 on unmarshal", packet.Qos)
 	}
 
 	data = []byte{0, 4, 'M', 'Q', 'T', 'T', 4, WillQos1Flag | WillQos2Flag, 1, 2}
 	packet = NewConnectPacket()
 	packet.unmarshalVariableHeader(data)
-	if packet.qos != 3 {
-		t.Errorf("qos is %d but should be 3 on unmarshal", packet.qos)
+	if packet.Qos != 3 {
+		t.Errorf("qos is %d but should be 3 on unmarshal", packet.Qos)
 	}
 
 }
@@ -229,7 +229,7 @@ func TestPacketConstructor(t *testing.T) {
 	if packet == nil {
 		t.Errorf("Packet is nil")
 	} else {
-		if packet.fixedHeader == nil {
+		if packet.FixedHeader == nil {
 			t.Errorf("Fixed header is nil")
 		}
 	}
@@ -254,7 +254,7 @@ func TestMarshalConnectServerId(t *testing.T) {
 
 func TestMarshalConnectServerIdSet(t *testing.T) {
 	packet := NewConnectPacket()
-	packet.clientID = "afjdj3c"
+	packet.ClientID = "afjdj3c"
 	data, _ := packet.Marshal()
 
 	// Should be 2+10+9
@@ -271,10 +271,10 @@ func TestUnmarshalConnect(t *testing.T) {
 	data := []byte{21, 14, 0, 4, 'M', 'Q', 'T', 'T', 4, 0, 1, 2, 0, 0}
 	packet := new(ConnectPacket)
 	packet.unmarshal(data)
-	if packet.fixedHeader == nil {
+	if packet.FixedHeader == nil {
 		t.Errorf("Fixed header nil")
 	}
-	if packet.clientID == "" {
+	if packet.ClientID == "" {
 		t.Errorf("clientID header empty")
 	}
 }
@@ -283,10 +283,10 @@ func TestUnmarshalConnectWithId(t *testing.T) {
 	data := []byte{21, 14, 0, 4, 'M', 'Q', 'T', 'T', 4, 0, 1, 2, 0, 4, 't', 'e', 's', 't'}
 	packet := new(ConnectPacket)
 	packet.unmarshal(data)
-	if packet.fixedHeader == nil {
+	if packet.FixedHeader == nil {
 		t.Errorf("Fixed header nil")
 	}
-	if strings.Compare(packet.clientID, "test") != 0 {
-		t.Errorf("clientID should be test but is %s", packet.clientID)
+	if strings.Compare(packet.ClientID, "test") != 0 {
+		t.Errorf("clientID should be test but is %s", packet.ClientID)
 	}
 }

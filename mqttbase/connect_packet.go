@@ -30,21 +30,21 @@ const UsernameFlag byte = 0x80
 
 // ConnectPacket - ConnectPacket data structure
 type ConnectPacket struct {
-	fixedHeader  *FixedHeader
-	length       uint16
-	userNameFlag bool
-	passwordFlag bool
-	willRetain   bool
-	qos          int
-	willFlag     bool
-	cleanSession bool
-	keepAlive    uint16
-	id           uint16
-	clientID     string
-	willTopic    string
-	willMessage  string
-	username     string
-	password     string
+	FixedHeader  *FixedHeader
+	Length       uint16
+	UserNameFlag bool
+	PasswordFlag bool
+	WillRetain   bool
+	Qos          int
+	WillFlag     bool
+	CleanSession bool
+	KeepAlive    uint16
+	Id           uint16
+	ClientID     string
+	WillTopic    string
+	WillMessage  string
+	Username     string
+	Password     string
 }
 
 // PacketType - Returns packet type
@@ -55,8 +55,8 @@ func (p *ConnectPacket) PacketType() byte {
 // NewConnectPacket - Creates a new Connect Packet
 func NewConnectPacket() *ConnectPacket {
 	packet := new(ConnectPacket)
-	packet.fixedHeader = new(FixedHeader)
-	packet.fixedHeader.cntrlPacketType = Connect
+	packet.FixedHeader = new(FixedHeader)
+	packet.FixedHeader.cntrlPacketType = Connect
 	return packet
 }
 
@@ -66,22 +66,22 @@ func (p *ConnectPacket) MarshalVariableHeader() []byte {
 	data = append(data, str...)
 	data = append(data, ProtocolVersion)
 	var flags byte
-	if p.userNameFlag {
+	if p.UserNameFlag {
 		flags = flags | UsernameFlag
 	}
-	if p.passwordFlag {
+	if p.PasswordFlag {
 		flags = flags | PasswordFlag
 	}
-	if p.willRetain {
+	if p.WillRetain {
 		flags = flags | WillRetainFlag
 	}
-	if p.willFlag {
+	if p.WillFlag {
 		flags = flags | WillFlag
 	}
-	if p.cleanSession {
+	if p.CleanSession {
 		flags = flags | CleanSession
 	}
-	switch p.qos {
+	switch p.Qos {
 	case 1:
 		flags = flags | WillQos1Flag
 	case 2:
@@ -90,8 +90,8 @@ func (p *ConnectPacket) MarshalVariableHeader() []byte {
 		flags = flags | WillQos1Flag | WillQos2Flag
 	}
 	data = append(data, flags)
-	data = append(data, byte(p.keepAlive>>8&0xFF))
-	data = append(data, byte(p.keepAlive&0xFF))
+	data = append(data, byte(p.KeepAlive>>8&0xFF))
+	data = append(data, byte(p.KeepAlive&0xFF))
 	return data
 }
 
@@ -100,45 +100,45 @@ func (p *ConnectPacket) unmarshalVariableHeader(data []byte) error {
 	if err != nil || str != "MQTT" {
 		return errors.New("Wrong protocol")
 	}
-	p.keepAlive = (uint16(data[8]) << 8) | uint16(data[9])
+	p.KeepAlive = (uint16(data[8]) << 8) | uint16(data[9])
 	if (data[7] & UsernameFlag) != 0 {
-		p.userNameFlag = true
+		p.UserNameFlag = true
 	}
 	if (data[7] & PasswordFlag) != 0 {
-		p.passwordFlag = true
+		p.PasswordFlag = true
 	}
 	if (data[7] & WillRetainFlag) != 0 {
-		p.willRetain = true
+		p.WillRetain = true
 	}
 	if (data[7] & WillFlag) != 0 {
-		p.willFlag = true
+		p.WillFlag = true
 	}
 	if (data[7] & CleanSession) != 0 {
-		p.cleanSession = true
+		p.CleanSession = true
 	}
 	if (data[7] & WillQos1Flag) != 0 {
-		p.qos = 0x1
+		p.Qos = 0x1
 	}
 	if (data[7] & WillQos2Flag) != 0 {
-		p.qos = p.qos | 0x2
+		p.Qos = p.Qos | 0x2
 	}
 	return nil
 }
 
 func (p *ConnectPacket) Marshal() ([]byte, error) {
 	var sd []byte
-	if len(p.clientID) > 0 {
-		p.fixedHeader.remaingLength = uint32(10 + len(p.clientID) + 2)
+	if len(p.ClientID) > 0 {
+		p.FixedHeader.remaingLength = uint32(10 + len(p.ClientID) + 2)
 		var err error
-		sd, err = EncodeString(p.clientID)
+		sd, err = EncodeString(p.ClientID)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		p.fixedHeader.remaingLength = 12
+		p.FixedHeader.remaingLength = 12
 		sd = []byte{0, 0}
 	}
-	fixedHeader := p.fixedHeader.Marshal()
+	fixedHeader := p.FixedHeader.Marshal()
 	variableHeader := p.MarshalVariableHeader()
 	data := make([]byte, 0, len(fixedHeader)+12)
 	data = append(data, fixedHeader...)
@@ -150,17 +150,17 @@ func (p *ConnectPacket) Marshal() ([]byte, error) {
 func (p *ConnectPacket) unmarshal(data []byte) error {
 	fh := new(FixedHeader)
 	fh.unmarshal(data)
-	p.fixedHeader = fh
+	p.FixedHeader = fh
 	err := p.unmarshalVariableHeader(data[2:])
 	if err != nil {
 		return err
 	}
-	p.clientID, err = UnencodeString(data[12:])
+	p.ClientID, err = UnencodeString(data[12:])
 	if err != nil {
 		return err
 	}
-	if p.clientID == "" {
-		p.clientID = "NewId"
+	if p.ClientID == "" {
+		p.ClientID = "NewId"
 	}
 	return nil
 }

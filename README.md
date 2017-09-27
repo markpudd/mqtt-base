@@ -8,6 +8,6 @@ To use you can create a new packet using New{packet_type}Packet, setup the data 
 
 To unmarshal use the Unmarshal method on data_reader.go, this will return a base Packet type which can me cast ie:-
 
-      `connect = packet.(\*mqttbase.ConnectPacket)`
+      connect = packet.(*mqttbase.ConnectPacket)
 
 Feel free to send pull request if you make changes.

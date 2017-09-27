@@ -6,7 +6,7 @@ Each packet type has a related go file and test.   There is a also data reader w
 
 To use you can create a new packet using New{packet_type}Packet, setup the data you need and then call Marshal which will return a byte array.
 
-To unmarshal use the Unmarshal method on data_reader.go, this will return a base Packet type which can me cast ie:-
+To unmarshal use the Unmarshal method on data_reader.go, this will return a base Packet type which can be cast ie:-
 
       connect = packet.(*mqttbase.ConnectPacket)
 

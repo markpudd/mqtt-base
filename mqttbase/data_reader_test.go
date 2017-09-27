@@ -72,7 +72,11 @@ func TestRecievePublishPacket(t *testing.T) {
 func TestUnmarshalPublishPacket(t *testing.T) {
 	buffer := []byte{0x30, 16, 0, 3, 'a', '/', 'b', 0x3a, 0xcd, 'T', 'E',
 		'S', 'T', '_', 'D', 'A', 'T', 'A'}
-	packet, _ := Unmarshal(buffer)
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
 	if (*packet).PacketType() != Publish {
 		t.Errorf("Packet not publish")
 	}
@@ -80,7 +84,11 @@ func TestUnmarshalPublishPacket(t *testing.T) {
 
 func TestUnmarshalConnectPacket(t *testing.T) {
 	buffer := []byte{21, 14, 0, 4, 'M', 'Q', 'T', 'T', 4, 0, 1, 2, 0, 4, 't', 'e', 's', 't'}
-	packet, _ := Unmarshal(buffer)
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
 	if (*packet).PacketType() != Connect {
 		t.Errorf("Packet not connect")
 	}
@@ -88,7 +96,11 @@ func TestUnmarshalConnectPacket(t *testing.T) {
 
 func TestUnmarshalConnackPacket(t *testing.T) {
 	buffer := []byte{32, 2, 0, 3}
-	packet, _ := Unmarshal(buffer)
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
 	if (*packet).PacketType() != Connack {
 		t.Errorf("Packet not connectack")
 	}
@@ -96,7 +108,11 @@ func TestUnmarshalConnackPacket(t *testing.T) {
 
 func TestUnmarshalPubackPacket(t *testing.T) {
 	buffer := []byte{0x40, 2, 0x3a, 0xcd}
-	packet, _ := Unmarshal(buffer)
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
 	if (*packet).PacketType() != Puback {
 		t.Errorf("Packet not publish")
 	}
@@ -104,7 +120,11 @@ func TestUnmarshalPubackPacket(t *testing.T) {
 
 func TestUnmarshalPingreqPacket(t *testing.T) {
 	buffer := []byte{0xc0, 0}
-	packet, _ := Unmarshal(buffer)
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
 	if (*packet).PacketType() != Pingreq {
 		t.Errorf("Packet not Pingreq")
 	}
@@ -112,8 +132,96 @@ func TestUnmarshalPingreqPacket(t *testing.T) {
 
 func TestUnmarshalPingrespPacket(t *testing.T) {
 	buffer := []byte{0xd0, 0}
-	packet, _ := Unmarshal(buffer)
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
 	if (*packet).PacketType() != Pingresp {
 		t.Errorf("Packet not Pingresp")
+	}
+}
+
+func TestUnmarshalPubrecPacket(t *testing.T) {
+	buffer := []byte{0x50, 0x02, 0xa6, 0xf2}
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	if (*packet).PacketType() != Pubrec {
+		t.Errorf("Packet not Pingrec")
+	}
+}
+
+func TestUnmarshalPubrelPacket(t *testing.T) {
+	buffer := []byte{0x62, 0x02, 0xa6, 0xf2}
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	if (*packet).PacketType() != Pubrel {
+		t.Errorf("Packet not Pubrel")
+	}
+}
+
+func TestUnmarshalPubcompPacket(t *testing.T) {
+	buffer := []byte{0x70, 0x02, 0xa6, 0xf2}
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	if (*packet).PacketType() != Pubcomp {
+		t.Errorf("Packet not Pubcomp")
+	}
+}
+
+func TestUnmarshalSubscribePacket(t *testing.T) {
+	buffer := []byte{0x82, 13, 0x5a, 0x22, 0, 3, 'e', '/', 'f', 1, 0, 2, 'g', 'h', 2}
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	if (*packet).PacketType() != Subscribe {
+		t.Errorf("Packet not Subscribe")
+	}
+}
+
+func TestUnmarshalSubackPacket(t *testing.T) {
+	buffer := []byte{0x90, 0x06, 0xa6, 0xf2, 0x00, 0x01, 0x02, 0xf0}
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	if (*packet).PacketType() != Suback {
+		t.Errorf("Packet not Suback")
+	}
+}
+
+func TestUnmarshalUnsubscribePacket(t *testing.T) {
+	buffer := []byte{0xa2, 13, 0x5a, 0x22, 0, 3, 'e', '/', 'f', 1, 0, 2, 'g', 'h', 2}
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	if (*packet).PacketType() != Unsubscribe {
+		t.Errorf("Packet not Unsubscribe")
+	}
+}
+
+func TestUnmarshalUnSubackPacket(t *testing.T) {
+	buffer := []byte{0xb0, 0x02, 0xa6, 0xf2}
+	packet, err := Unmarshal(buffer)
+	if err != nil {
+		t.Errorf(err.Error())
+		return
+	}
+	if (*packet).PacketType() != UnSuback {
+		t.Errorf("Packet not Unsuback")
 	}
 }

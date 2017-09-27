@@ -17,6 +17,13 @@ func TestEncodeLength(t *testing.T) {
 	}
 }
 
+func TestEncodeLengthOfZero(t *testing.T) {
+	r := EncodeLength(0)
+	if len(r) != 1 || r[0] != 0x0 {
+		t.Errorf("Unable to encode 0")
+	}
+}
+
 func TestUnencodeLength(t *testing.T) {
 	r, len := UnencodeLength([]byte{64})
 	if r != 64 {

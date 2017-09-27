@@ -62,36 +62,56 @@ func Unmarshal(data []byte) (*Packet, error) {
 		return nil, errors.New("Zero length data packet")
 	}
 	switch data[0] & 0xF0 {
-	case 0x10:
+	case Connect:
 		packet = NewConnectPacket()
 		packet.unmarshal(data)
 		break
-	case 0x20:
+	case Connack:
 		packet = NewConnackPacket()
 		packet.unmarshal(data)
 		break
-	case 0x30:
+	case Publish:
 		packet = NewPublishPacket()
 		packet.unmarshal(data)
 		break
-	case 0x40:
+	case Puback:
 		packet = NewPubackPacket()
 		packet.unmarshal(data)
 		break
-	case 0x80:
+	case Pubrec:
+		packet = NewPubrecPacket()
+		packet.unmarshal(data)
+		break
+	case Pubrel & 0xf0:
+		packet = NewPubrelPacket()
+		packet.unmarshal(data)
+		break
+	case Pubcomp:
+		packet = NewPubcompPacket()
+		packet.unmarshal(data)
+		break
+	case Subscribe & 0xf0:
 		packet = NewSubscribePacket()
 		packet.unmarshal(data)
 		break
-	case 0x90:
+	case Suback:
 		packet = NewSubackPacket()
 		packet.unmarshal(data)
 		break
-	case 0xc0:
+	case Pingreq:
 		packet = NewPingReqPacket()
 		packet.unmarshal(data)
 		break
-	case 0xd0:
+	case Pingresp:
 		packet = NewPingRespPacket()
+		packet.unmarshal(data)
+		break
+	case Unsubscribe & 0xf0:
+		packet = NewUnsubscribePacket()
+		packet.unmarshal(data)
+		break
+	case UnSuback:
+		packet = NewUnSubackPacket()
 		packet.unmarshal(data)
 		break
 	default:

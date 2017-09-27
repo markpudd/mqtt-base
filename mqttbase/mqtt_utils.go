@@ -25,6 +25,9 @@ func UnencodeString(data []byte) (string, error) {
 
 // EncodeLength -  encodes  length
 func EncodeLength(i uint32) []byte {
+	if i == 0 {
+		return []byte{0}
+	}
 	ret := make([]byte, 0, 4)
 	for i > 0 && len(ret) <= 4 {
 		if i < 128 {

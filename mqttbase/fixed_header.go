@@ -38,6 +38,9 @@ const Suback byte = 0x90
 // Unsubscribe - Constant Unsubscribe bit
 const Unsubscribe byte = 0xa2
 
+// Unsubscribe Ack - Constant Unsubscribe bit
+const UnSuback byte = 0xb0
+
 // Pingreq - Constant Pingreq bit
 const Pingreq byte = 0xc0
 

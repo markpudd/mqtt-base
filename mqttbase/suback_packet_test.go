@@ -32,7 +32,7 @@ func TestMarshalSuback(t *testing.T) {
 	packet.Id = 0xa6f2
 	data, _ := packet.Marshal()
 	if len(data) != 8 {
-		t.Errorf("Data lentgh wrong should be 5 but was %d", len(data))
+		t.Errorf("Data lentgh wrong should be 8 but was %d", len(data))
 	} else {
 		expected := []byte{0x90, 0x06, 0xa6, 0xf2, 0x00, 0x01, 0x02, 0xf0}
 		for i := 0; i < 8; i++ {
